@@ -2,7 +2,69 @@
 const { body, validationResult } = require("express-validator");
 const { User, TemporaryLink } = require("#models");
 const { UserAccountStatus, HttpStatusCode } = require("#constants");
-const { signJWT, verificationClient } = require("#services");
+const { signJWT, sendVerificationMail } = require("#services");
+
+// register account
+exports.registerAccountHandler = [
+  body("email").isEmail(),
+  body("password").isString(),
+  body("name").isString(),
+  body("contactNo").isString(),
+  async (req, res, next) => {
+    if (req.user) {
+      console.error(
+        "Cannot register again when the token has not expired",
+        req.user.userId
+      );
+      res
+        .status(HttpStatusCode.BAD_REQUEST)
+        .send({ errors: "Cannot login again when the token has not expired!" });
+      return;
+    }
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      // There are errors. Render form again with sanitized values/errors messages.
+      res.status(HttpStatusCode.BAD_REQUEST).send({ errors: errors.array() });
+      return;
+    }
+    const email = req.body.email;
+    const password = req.body.password;
+    const name = req.body.name;
+    const contactNo = req.body.contactNo;
+    try {
+      const existingUser = await User.findOne(
+        {
+          email,
+          contactNo,
+        },
+        { _id: 1 }
+      );
+      if (existingUser) {
+        console.error("Email Id or Contact No. is already taken");
+        res
+          .status(HttpStatusCode.BAD_REQUEST)
+          .send({ errors: "Email Id or Contact No. is already taken!" });
+        return;
+      }
+
+      const user = new User({
+        name,
+        email,
+        password,
+        contactNo,
+      });
+
+      const result = await user.save();
+      res.status(HttpStatusCode.OK).send();
+      sendVerificationMail(email);
+    } catch (err) {
+      res
+        .status(HttpStatusCode.BAD_REQUEST)
+        .send({ errors: "Invalid Email Id or Password!" });
+    }
+  },
+];
 
 // login
 exports.loginAccountHandler = [
@@ -74,8 +136,8 @@ exports.loginAccountHandler = [
         {
           userId: user._id,
           admin: user.admin,
-          organizationId: user.organizationId,
-          organizationType: user.organizationType,
+          email: user.email,
+          username: user.username,
         },
         "30d"
       );
@@ -131,7 +193,7 @@ exports.forgotPasswordHandler = [
       res
         .status(HttpStatusCode.OK)
         .send({ message: "Please check your email for reset link!" });
-      verificationClient(email);
+      sendVerificationMail(email);
     } catch (err) {
       console.error(err);
       res

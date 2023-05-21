@@ -35,14 +35,13 @@ class VerificationEmail extends Email {
   }
 
   async sendVerificationMail(email) {
+    const link = nanoid();
     const from = "TMDB Mailgun";
     const subject = "Password Reset Link";
     const text = `<p>
-        <h3> Click on the link below to verify your Email Id, this link will be invalid after 10 minutes</h3>
-        <a href="${config.FRONTEND_APP_URL}/login/${link}" target="_blank" >Verify Your Email</a>
+        <h3> Click on the link below to verify your Email Id, this link will be invalid after 20 minutes</h3>
+        <a href="${process.env.FRONTEND_APP_URL}/login/${link}" target="_blank" >Verify Your Email</a>
     </p>`;
-
-    const link = nanoid();
     const temporaryLink = new TemporaryLink({
       email,
       link,
@@ -63,7 +62,7 @@ class VerificationEmail extends Email {
 const verificationClient = new VerificationEmail();
 
 module.exports = {
-  verificationClient:
+  sendVerificationMail:
     verificationClient.sendVerificationMail.bind(verificationClient),
 };
 

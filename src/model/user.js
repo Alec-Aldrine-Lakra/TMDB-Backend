@@ -8,8 +8,9 @@ const UserSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     username: { type: String, required: true },
-    contactNo: { type: Number, required: true },
+    contactNo: { type: Number, required: true, unique: true },
     salt: { type: String, required: true },
+    admin: { type: Boolean, default: false },
     status: {
       type: Number,
       default: UserAccountStatus.PENDING,
