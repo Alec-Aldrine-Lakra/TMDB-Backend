@@ -11,8 +11,7 @@ class DBConnector {
     DBConnector.connection =
       DBConnector.connection ??
       mongoose.connect(this.connectionURI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
+        autoIndex: true,
       });
   }
 }
