@@ -1,3 +1,4 @@
+"use strict";
 const UserAccountStatus = {
   PENDING: 0,
   ACTIVATED: 1,

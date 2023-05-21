@@ -1,3 +1,4 @@
+"use strict";
 const { verifyJWT } = require("../service");
 exports.authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization || "";

@@ -1,3 +1,4 @@
+"use strict";
 const formData = require("form-data");
 const Mailgun = require("mailgun.js");
 const { nanoid } = require("nanoid");

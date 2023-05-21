@@ -1,3 +1,4 @@
+"use strict";
 const User = require("./user");
 const TemporaryLink = require("./temporaryLinks");
 
