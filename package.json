@@ -4,7 +4,8 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "start": "nodemon src/index"
+    "start": "node src/index",
+    "start:local": "nodemon src/index"
   },
   "imports": {
     "#models": "./src/model/index.js",
