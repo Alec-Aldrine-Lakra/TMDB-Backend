@@ -6,13 +6,13 @@ class DBConnector {
     mongoose.set("strictQuery", false);
   }
 
-  connectDB() {
-    this.connectionURI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@logistics.m5zfw.mongodb.net/?retryWrites=true&w=majority`;
+  async connectDB() {
+    this.connectionURI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@logistics.m5zfw.mongodb.net/TMDB?retryWrites=true&w=majority`;
     DBConnector.connection =
       DBConnector.connection ??
-      mongoose.connect(this.connectionURI, {
+      (await mongoose.connect(this.connectionURI, {
         autoIndex: true,
-      });
+      }));
   }
 }
 

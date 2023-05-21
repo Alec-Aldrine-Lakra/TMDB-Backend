@@ -17,13 +17,13 @@ class Email {
     return Email.client;
   }
 
-  async sendMail({ from, to, subject, text }) {
+  async sendMail({ from, to, subject, html }) {
     const client = this.getClient();
     return client.messages.create(process.env.MAILGUN_DOMAIN, {
       from,
       to,
       subject,
-      text,
+      html,
     });
   }
 }
@@ -34,15 +34,16 @@ class VerificationEmail extends Email {
   }
 
   async sendVerificationMail(email, link) {
-    const from = "TMDB Mailgun";
+    const from =
+      "TMDB <postmaster@sandboxf8371f9a7a1345559ef2097ad0421d99.mailgun.org>";
     const subject = "Password Reset Link";
-    const text = `<p>
-        <h3> Click on the link below to verify your Email Id, this link will be invalid after 20 minutes</h3>
-        <a href="${process.env.FRONTEND_APP_URL}/login/${link}" target="_blank" >Verify Your Email</a>
+    const html = `<p>
+        <h3>Click on the link below to verify your Email Id, this link will be invalid after 20 minutes</h3>
+        <a href="${process.env.FRONTEND_APP_URL}/login/${link}" target="_blank">Verify Your Email</a>
     </p>`;
 
     try {
-      await this.sendMail({ from, subject, text, to: email });
+      await this.sendMail({ from, subject, html, to: [email] });
     } catch (err) {
       console.error(err);
     }
