@@ -1,8 +1,6 @@
 "use strict";
 const formData = require("form-data");
 const Mailgun = require("mailgun.js");
-const { nanoid } = require("nanoid");
-const { TemporaryLink } = require("../model");
 
 class Email {
   static client;
@@ -35,25 +33,16 @@ class VerificationEmail extends Email {
     super();
   }
 
-  async sendVerificationMail(email) {
-    const link = nanoid();
+  async sendVerificationMail(email, link) {
     const from = "TMDB Mailgun";
     const subject = "Password Reset Link";
     const text = `<p>
         <h3> Click on the link below to verify your Email Id, this link will be invalid after 20 minutes</h3>
         <a href="${process.env.FRONTEND_APP_URL}/login/${link}" target="_blank" >Verify Your Email</a>
     </p>`;
-    const temporaryLink = new TemporaryLink({
-      email,
-      link,
-    });
 
     try {
-      const linkResult = await temporaryLink.save();
-      if (!linkResult) {
-        throw new Error("Error saving temporary link to DB");
-      }
-      await this.sendMail({ from, subject, text, to });
+      await this.sendMail({ from, subject, text, to: email });
     } catch (err) {
       console.error(err);
     }

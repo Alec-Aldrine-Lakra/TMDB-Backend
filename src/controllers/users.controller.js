@@ -2,7 +2,7 @@
 const { body, validationResult } = require("express-validator");
 const { User, TemporaryLink } = require("../model");
 const { UserAccountStatus, HttpStatusCode } = require("../constants");
-const { signJWT, sendVerificationMail } = require("../service");
+const { signJWT, sendVerificationMail, nanoid } = require("../service");
 
 // register account
 exports.registerAccountHandler = [
@@ -54,12 +54,18 @@ exports.registerAccountHandler = [
         password,
         contactNo,
       });
+      const link = nanoid();
+      const temporaryLink = new TemporaryLink({
+        email,
+        link,
+      });
 
-      const result = await user.save();
+      const result = await Promise.all([user.save(), temporaryLink.save()]);
+
       res
         .status(HttpStatusCode.OK)
         .send({ message: "User created successfully" });
-      sendVerificationMail(email);
+      sendVerificationMail(email, link);
     } catch (err) {
       console.error("Failed registering a new user", err);
       res

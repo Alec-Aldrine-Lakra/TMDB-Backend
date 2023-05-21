@@ -1,7 +1,6 @@
 "use strict";
 const crypto = require("crypto");
-const { customAlphabet } = require("nanoid");
-const nanoid = customAlphabet("1234567890pqrstuvwxyzABCDEFGHIJKLMNO", 16);
+const { nanoid } = require("./nanoid");
 exports.saltAndSecretGenerator = (secret, salt) => {
   salt = salt || nanoid();
   salt = salt.trim();
