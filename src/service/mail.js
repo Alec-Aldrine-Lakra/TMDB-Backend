@@ -34,8 +34,7 @@ class VerificationEmail extends Email {
   }
 
   async sendVerificationMail(email, link) {
-    const from =
-      "TMDB <postmaster@sandboxf8371f9a7a1345559ef2097ad0421d99.mailgun.org>";
+    const from = `TMDB ${process.env.MAILGUN_FROM}`;
     const subject = "Password Reset Link";
     const html = `<p>
         <h3>Click on the link below to verify your Email Id, this link will be invalid after 20 minutes</h3>
