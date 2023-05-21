@@ -2,7 +2,7 @@
 const formData = require("form-data");
 const Mailgun = require("mailgun.js");
 const { nanoid } = require("nanoid");
-const { TemporaryLink } = require("#models");
+const { TemporaryLink } = require("../model");
 
 class Email {
   static client;

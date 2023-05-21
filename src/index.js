@@ -4,7 +4,7 @@ require("dotenv").config();
 const dbConnection = require("./db");
 const helmet = require("helmet");
 const cors = require("cors");
-const { authMiddleware } = require("#middleware");
+const { authMiddleware } = require("./middleware");
 const routes = require("./routes");
 
 const app = express();

@@ -1,12 +1,12 @@
 "use strict";
-const { HttpStatusCode } = require("#constants");
+const { HttpStatusCode } = require("./constants");
 const {
   loginAccountHandler,
   logoutHandler,
   forgotPasswordHandler,
   verifyPasswordHandler,
   registerAccountHandler,
-} = require("#controllers");
+} = require("./controllers");
 
 module.exports = function (app) {
   if (!app) {

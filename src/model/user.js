@@ -1,7 +1,7 @@
 "use strict";
 const mongoose = require("mongoose");
-const { UserAccountStatus } = require("#constants");
-const saltAndSecretGenerator = require("#services");
+const { UserAccountStatus } = require("../constants");
+const { saltAndSecretGenerator } = require("../service");
 
 const UserSchema = new mongoose.Schema(
   {

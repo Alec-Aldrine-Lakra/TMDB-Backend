@@ -1,15 +1,15 @@
 "use strict";
 const { body, validationResult } = require("express-validator");
-const { User, TemporaryLink } = require("#models");
-const { UserAccountStatus, HttpStatusCode } = require("#constants");
-const { signJWT, sendVerificationMail } = require("#services");
+const { User, TemporaryLink } = require("../model");
+const { UserAccountStatus, HttpStatusCode } = require("../constants");
+const { signJWT, sendVerificationMail } = require("../service");
 
 // register account
 exports.registerAccountHandler = [
   body("email").isEmail(),
   body("password").isString(),
-  body("name").isString(),
-  body("contactNo").isString(),
+  body("username").isString(),
+  body("contactNo").isNumeric(),
   async (req, res, next) => {
     if (req.user) {
       console.error(
@@ -30,7 +30,7 @@ exports.registerAccountHandler = [
     }
     const email = req.body.email;
     const password = req.body.password;
-    const name = req.body.name;
+    const username = req.body.username;
     const contactNo = req.body.contactNo;
     try {
       const existingUser = await User.findOne(
@@ -49,19 +49,22 @@ exports.registerAccountHandler = [
       }
 
       const user = new User({
-        name,
+        username,
         email,
         password,
         contactNo,
       });
 
       const result = await user.save();
-      res.status(HttpStatusCode.OK).send();
+      res
+        .status(HttpStatusCode.OK)
+        .send({ message: "User created successfully" });
       sendVerificationMail(email);
     } catch (err) {
+      console.error("Failed registering a new user", err);
       res
         .status(HttpStatusCode.BAD_REQUEST)
-        .send({ errors: "Invalid Email Id or Password!" });
+        .send({ errors: "Failed registering a new user!" });
     }
   },
 ];
@@ -124,6 +127,7 @@ exports.loginAccountHandler = [
         res
           .status(HttpStatusCode.FORBIDDEN)
           .send({ errors: "Invalid Email Id or Password!" });
+        return;
       }
       if (link) {
         // Updating inactive user to active
